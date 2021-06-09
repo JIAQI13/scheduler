@@ -1,32 +1,15 @@
 import React from "react";
 // import classnames from "classnames";
 import "components/Appointment/styles.scss";
+import Button from "components/Button"
 
-export default function Show(props) {
+export default function Confirm(props) {
     return (
-        <main className="appointment__card appointment__card--show">
-            <section className="appointment__card-left">
-                <h2 className="text--regular">{props.student}</h2>
-                <section className="interviewer">
-                    <h4 className="text--light">Interviewer</h4>
-                    <h3 className="text--regular">{props.interviewers.name}</h3>
-                </section>
-            </section>
-            <section className="appointment__card-right">
-                <section className="appointment__actions">
-                    <img
-                        className="appointment__actions-button"
-                        src="images/edit.png"
-                        alt="Edit"
-                        onClick={() => props.onEdit()}
-                    />
-                    <img
-                        className="appointment__actions-button"
-                        src="images/trash.png"
-                        alt="Delete"
-                        onClick={() => props.onDelete()}
-                    />
-                </section>
+        <main className="appointment__card appointment__card--confirm">
+            <h1 className="text--semi-bold">{props.message}</h1>
+            <section className="appointment__actions">
+                <Button danger onClick={() => props.onCancel(false)}>Cancel</Button>
+                <Button danger onClick={() => props.onConfirml(true)}>Confirm</Button>
             </section>
         </main>
     );
