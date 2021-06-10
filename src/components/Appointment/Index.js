@@ -1,15 +1,23 @@
 import React from "react";
 // import classnames from "classnames";
 import "components/Appointment/styles.scss";
-import "components/Appointment/Header";
-import "components/Appointment/Empty";
-import "components/Appointment/Show";
+import Header from "components/Appointment/Header";
+import Empty from "components/Appointment/Empty";
+import Show from "components/Appointment/Show";
 import "components/Appointment/Confirm";
 import "components/Appointment/Status";
 import "components/Appointment/Error";
 
 export default function Appointment(props) {
     return (
-        <article className="appointment">asdfasd</article>
+        <>
+            <Header time={props.time} />
+            {props.interview
+                ? <Show student="Lydia Miller-Jones"
+                    interviewers={props.interview.interviewers}
+                />
+                : <Empty />
+            }
+        </>
     );
 }
