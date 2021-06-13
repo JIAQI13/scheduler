@@ -32,7 +32,8 @@ export default function Appointment(props) {
         };
         transition(SAVING, false);
         setTimeout(() => {
-            props.bookInterview(props.id, interview, edit)
+            props
+                .bookInterview(props.id, interview, edit)
                 .then(() => transition(SHOW, true))
                 .catch(() => transition(ERROR_SAVE, true))
         }, 1000);
@@ -46,7 +47,8 @@ export default function Appointment(props) {
         if (confirm) {
             transition(DELETING, false);
             setTimeout(() => {
-                props.cancelInterview(props.id)
+                props
+                    .cancelInterview(props.id)
                     .then(() => transition(EMPTY, true))
                     .catch(() => transition(ERROR_DELETE, true))
             }, 1000);
