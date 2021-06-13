@@ -1,26 +1,10 @@
 import React, { useState, useEffect } from "react";
 import "components/Application.scss";
 import Appointment from "components/Appointment/Index";
-import getAppointmentsForDay from "helpers/selectors";
 import DayList from "./DayList";
 import axios from "axios";
-// const days = [
-//   {
-//     id: 1,
-//     name: "Monday",
-//     spots: 2,
-//   },
-//   {
-//     id: 2,
-//     name: "Tuesday",
-//     spots: 5,
-//   },
-//   {
-//     id: 3,
-//     name: "Wednesday",
-//     spots: 0,
-//   },
-// ];
+import { getAppointmentsForDay, getInterview, getInterviewersForDay, getAppointmentsById } from "helpers/selectors";
+
 
 const appointments = [
   {
@@ -75,6 +59,44 @@ export default function Application(props) {
 
   const setDay = day => setState({ ...state, day });
 
+  function spotCalculator(id, boolean = false) {     //update spots. boolean ? new appointment : delete appointment 
+
+    let spot = 0;
+    boolean ? spot-- : spot++;
+    const days = state.days.filter(ele => {
+      return [ele.appointments.find(appId => appId === id) ? ele.spots += spot : null, ele];
+    });
+    return setState({ ...state, days });
+  };
+
+  function bookInterview(id, interview, edit) {
+    const appointments = getAppointmentsById(state.appointments, interview, id);
+    return axios.put(`/api/appointments/${id}`, { interview: interview })
+      .then(res => console.log(res))
+      .then(() => {
+        setState({
+          ...state,
+          appointments,
+        });
+      })
+      .then(() => {
+        if (!edit) { spotCalculator(id, true) }                  // edit ? editing, no spot change : new booking, spot--
+      });                                                      // putting here to prevent falsy change in case of server down
+  };
+
+  function cancelInterview(id) {
+    return axios.delete(`/api/appointments/${id}`)
+      .then(res => console.log(res))
+      .then(() => {
+        setState({
+          ...state,
+        })
+      })
+      .then(() => {
+        spotCalculator(id);
+      })
+  };
+
   return (
     <main className="layout">
       <section className="sidebar">
@@ -95,13 +117,17 @@ export default function Application(props) {
       </section>
       <section className="schedule">
         {
-          appointments.map((appointment) => {
-            return (
-              <>
-                <Appointment key={appointment.id} {...appointment} />
-                <Appointment time="5pm" />
-              </>
-            )
+          state["appointments"].map(ele => {
+            const interviewName = getInterview(state, ele.interview)    //student name & interviewer, if exists.
+            return <Appointment
+              key={ele.id}
+              id={ele.id}
+              time={ele.time}
+              interview={interviewName}
+              interviewers={getInterviewersForDay(state, state.day)}
+              bookInterview={bookInterview}
+              cancelInterview={cancelInterview}
+            />
           })
         }
       </section>

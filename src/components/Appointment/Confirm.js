@@ -9,7 +9,7 @@ export default function Confirm(props) {
             <h1 className="text--semi-bold">{props.message}</h1>
             <section className="appointment__actions">
                 <Button danger onClick={() => props.onCancel(false)}>Cancel</Button>
-                <Button danger onClick={() => props.onConfirml(true)}>Confirm</Button>
+                <Button danger onClick={() => props.onConfirm(true)}>Confirm</Button>
             </section>
         </main>
     );
