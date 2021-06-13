@@ -6,6 +6,7 @@ import axios from "axios";
 import { getAppointmentsForDay, getInterview, getInterviewersForDay, getAppointmentsById } from "helpers/selectors";
 
 
+
 export default function Application(props) {
   const [state, setState] = useState({
     day: "Monday",
@@ -39,7 +40,7 @@ export default function Application(props) {
 
   const setDay = day => setState({ ...state, day });
 
-  function spotCalculator(id, boolean = false) {     //update spots. boolean ? new appointment : delete appointment 
+  function spotCalculator(id, boolean = false) {
 
     let spot = 0;
     boolean ? spot-- : spot++;
@@ -51,8 +52,7 @@ export default function Application(props) {
 
   function bookInterview(id, interview, edit) {
     const appointments = getAppointmentsById(state.appointments, interview, id);
-    return axios.put(`/api/appointments/${id}`, { interview: interview })
-      .then(res => console.log(res))
+    return axios.put(`/api/appointments/${id}`, { interview: interview }, { timeout: 10000 })
       .then(() => {
         setState({
           ...state,
@@ -60,13 +60,12 @@ export default function Application(props) {
         });
       })
       .then(() => {
-        if (!edit) { spotCalculator(id, true) }                  // edit ? editing, no spot change : new booking, spot--
-      });                                                      // putting here to prevent falsy change in case of server down
+        if (!edit) { spotCalculator(id, true) }
+      });
   };
 
   function cancelInterview(id) {
-    return axios.delete(`/api/appointments/${id}`)
-      .then(res => console.log(res))
+    return axios.delete(`/api/appointments/${id}`, { timeout: 10000 })
       .then(() => {
         setState({
           ...state,

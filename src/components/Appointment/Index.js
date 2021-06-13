@@ -31,27 +31,23 @@ export default function Appointment(props) {
             interviewer
         };
         transition(SAVING, false);
-        setTimeout(() => {
-            props
-                .bookInterview(props.id, interview, edit)
-                .then(() => transition(SHOW, true))
-                .catch(() => transition(ERROR_SAVE, true))
-        }, 1000);
+        props
+            .bookInterview(props.id, interview, edit)
+            .then(() => transition(SHOW, true))
+            .catch(() => transition(ERROR_SAVE, true))
     };
 
     function deleteApp() {
         transition(CONFIRM, false);
     };
 
-    function confirm(confirm) {  //confirm ? yes, delete it : no, don't
+    function confirm(confirm) {
         if (confirm) {
             transition(DELETING, false);
-            setTimeout(() => {
-                props
-                    .cancelInterview(props.id)
-                    .then(() => transition(EMPTY, true))
-                    .catch(() => transition(ERROR_DELETE, true))
-            }, 1000);
+            props
+                .cancelInterview(props.id)
+                .then(() => transition(EMPTY, true))
+                .catch(() => transition(ERROR_DELETE, true))
         } else {
             transition(SHOW, true);
         }
