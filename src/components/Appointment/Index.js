@@ -25,6 +25,10 @@ export default function Appointment(props) {
         props.interview ? SHOW : EMPTY
     );
 
+    function updateSpots() {
+
+    }
+
     function save(name, interviewer) {
         const interview = {
             student: name,
@@ -36,17 +40,14 @@ export default function Appointment(props) {
             .then(() => transition(SHOW))
             .catch(() => transition(ERROR_SAVE, true))
     };
-    function confirm(confirm) {
-        if (confirm) {
-            transition(DELETING, false);
-            props
-                .cancelInterview(props.id)
-                .then(() => transition(EMPTY))
-                .catch(() => transition(ERROR_DELETE, true))
-        } else {
-            transition(SHOW, true);
-        }
-    };
+
+    function destroy(event) {
+        transition(DELETING, true);
+        props
+            .cancelInterview(props.id)
+            .then(() => transition(EMPTY))
+            .catch(error => transition(ERROR_DELETE, true));
+    }
 
 
     return (
@@ -59,8 +60,8 @@ export default function Appointment(props) {
                 {mode === CONFIRM && (
                     <Confirm
                         message={"Are you sure you would like to delete?"}
-                        onConfirm={confirm}
-                        onCancel={confirm}
+                        onConfirm={destroy}
+                        onCancel={() => back()}
                     />
                 )}
                 {mode === SHOW && (
