@@ -7,11 +7,6 @@ const getAppointmentsForDay = function (state, day) {
     }
 };
 
-const getAppointmentsById = (appointments, interview, id) => {               //interview = {studentName, interview: {id, name}}
-    const index = appointments.findIndex(ele => ele.id === id);
-    appointments[index]["interview"] = interview;
-    return appointments;
-}
 
 const getInterview = function (state, interview) {
     return !interview ? null : { student: interview.student, interviewer: state.interviewers[interview.interviewer] };
@@ -29,6 +24,5 @@ const getInterviewersForDay = function (state, day) {
 export {
     getAppointmentsForDay,
     getInterview,
-    getInterviewersForDay,
-    getAppointmentsById,
+    getInterviewersForDay
 }

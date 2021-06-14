@@ -3,7 +3,7 @@ import "components/Application.scss";
 import Appointment from "components/Appointment/Index";
 import DayList from "./DayList";
 import axios from "axios";
-import { getAppointmentsForDay, getInterview, getInterviewersForDay, getAppointmentsById } from "helpers/selectors";
+import { getAppointmentsForDay, getInterview, getInterviewersForDay } from "helpers/selectors";
 
 
 
@@ -24,57 +24,57 @@ export default function Application(props) {
       setState(prev => ({
         ...prev,
         days: all[0].data,
-        appointments: getAppointmentsForDay({
-          ...prev,
-          days: all[0].data,
-          appointments: all[1].data,
-          interviewers: all[2].data
-        },
-          state.day
-        ),
+        appointments: all[1].data,
         interviewers: all[2].data
       }))
-      console.log(state.interviewers);
     });
   }, [state.day]);
 
   const setDay = day => setState({ ...state, day });
 
-  function spotCalculator(id, boolean = false) {
-
-    let spot = 0;
-    boolean ? spot-- : spot++;
-    const days = state.days.filter(ele => {
-      return [ele.appointments.find(appId => appId === id) ? ele.spots += spot : null, ele];
-    });
-    return setState({ ...state, days });
-  };
-
   function bookInterview(id, interview, edit) {
-    const appointments = getAppointmentsById(state.appointments, interview, id);
+    const appointment = {
+      ...state.appointments[id],
+      interview: { ...interview }
+    };
+    const appointments = {
+      ...state.appointments,
+      [id]: appointment
+    };
     return axios.put(`/api/appointments/${id}`, { interview: interview }, { timeout: 10000 })
       .then(() => {
-        setState({
-          ...state,
-          appointments,
-        });
-      })
-      .then(() => {
-        if (!edit) { spotCalculator(id, true) }
+        setState(prev => ({
+          ...prev,
+          appointments
+        }))
       });
   };
 
   function cancelInterview(id) {
     return axios.delete(`/api/appointments/${id}`, { timeout: 10000 })
       .then(() => {
-        setState({
-          ...state,
-        })
-      })
-      .then(() => {
-        spotCalculator(id);
+        setState(prev => ({
+          ...prev
+        }))
       })
   };
+
+  const interviewers = getInterviewersForDay(state, state.day);
+  console.log(state);
+  const appointments = getAppointmentsForDay(state, state.day).map(
+    appointment => {
+      return (
+        <Appointment
+          key={appointment.id}
+          {...appointment}
+          interview={getInterview(state, appointment.interview)}
+          interviewers={interviewers}
+          bookInterview={bookInterview}
+          cancelInterview={cancelInterview}
+        />
+      );
+    }
+  );
 
   return (
     <main className="layout">
@@ -95,20 +95,8 @@ export default function Application(props) {
         />
       </section>
       <section className="schedule">
-        {
-          state["appointments"].map(ele => {
-            const interviewName = getInterview(state, ele.interview)    //student name & interviewer, if exists.
-            return <Appointment
-              key={ele.id}
-              id={ele.id}
-              time={ele.time}
-              interview={interviewName}
-              interviewers={getInterviewersForDay(state, state.day)}
-              bookInterview={bookInterview}
-              cancelInterview={cancelInterview}
-            />
-          })
-        }
+        {appointments}
+        <Appointment key="last" time="5pm" />
       </section>
     </main>
   );
