@@ -25,10 +25,6 @@ export default function Appointment(props) {
         props.interview ? SHOW : EMPTY
     );
 
-    function updateSpots() {
-
-    }
-
     function save(name, interviewer) {
         const interview = {
             student: name,
@@ -85,7 +81,7 @@ export default function Appointment(props) {
                         name={props.interview.student}
                         interviewer={props.interview.interviewer.id}
                         interviewers={props.interviewers}
-                        onCancel={() => back(CREATE)}
+                        onCancel={() => back()}
                         onSave={save}
                         edit={true}
                     />

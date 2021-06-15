@@ -6,6 +6,7 @@ export default function useVisualMode(initial) {
 
     const transition = function (mode, replace) {
         if (replace) {
+            // history.pop();
             history.pop();
             setHistory(prev => [...prev, mode]);
             return setMode(mode);
@@ -14,9 +15,12 @@ export default function useVisualMode(initial) {
             return setMode(mode);
         }
     };
+
     const back = function () {
-        history.pop();
+        const last = history.pop();
+        if (last === "ERROR_DELETE" || last === "ERROR_SAVE") history.pop();
         return setMode(history[history.length - 1]);
     }
+
     return { mode, transition, back };
 }
