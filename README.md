@@ -3,7 +3,8 @@
 ## Setup
 
 Install dependencies with `npm install`.
-https://github.com/JIAQI13/scheduler/blob/master/doc/sch.png
+!["mobile"](https://github.com/JIAQI13/scheduler/blob/master/doc/sch.png)
+
 ## Running Webpack Development Server
 
 ```sh
