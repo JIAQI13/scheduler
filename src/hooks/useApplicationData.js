@@ -24,6 +24,20 @@ const useApplicationData = function () {
         });
     }, [state.day]);
 
+    const reset = async () => {
+        await Promise.all([
+            axios.get("/api/days"),
+            axios.get("/api/appointments"),
+            axios.get("/api/interviewers")
+        ]).then(all => {
+            setState(prev => ({
+                ...prev,
+                days: all[0].data,
+                appointments: all[1].data,
+                interviewers: all[2].data
+            }))
+        });
+    }
     const setDay = day => setState({ ...state, day });
 
     function updateSpots(id, plusOrMinus) {
@@ -76,7 +90,7 @@ const useApplicationData = function () {
         //     updateSpots(id, false);
         // });
     };
-    return { state, setDay, bookInterview, cancelInterview };
+    return { state, reset, setDay, bookInterview, cancelInterview };
 }
 
 export default useApplicationData;
